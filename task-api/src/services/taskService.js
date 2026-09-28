@@ -38,6 +38,7 @@ const create = ({ title, description = '', status = 'todo', priority = 'medium',
     priority,
     dueDate,
     completedAt: null,
+    assignee: null,
     createdAt: new Date().toISOString(),
   };
   tasks.push(task);
@@ -77,6 +78,20 @@ const completeTask = (id) => {
   return updated;
 };
 
+// Sets (or, with null, clears) the assignee. Reassigning simply replaces the
+// previous value. Expects input that already passed validateAssignTask.
+const assignTask = (id, assignee) => {
+  const index = tasks.findIndex((t) => t.id === id);
+  if (index === -1) return null;
+
+  const updated = {
+    ...tasks[index],
+    assignee: typeof assignee === 'string' ? assignee.trim() : null,
+  };
+  tasks[index] = updated;
+  return updated;
+};
+
 const _reset = () => {
   tasks = [];
 };
@@ -91,5 +106,6 @@ module.exports = {
   update,
   remove,
   completeTask,
+  assignTask,
   _reset,
 };

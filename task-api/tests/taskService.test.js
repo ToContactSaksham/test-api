@@ -30,6 +30,7 @@ describe('create', () => {
       priority: 'medium',
       dueDate: null,
       completedAt: null,
+      assignee: null,
       createdAt: expect.any(String),
     });
     expect(new Date(task.createdAt).toISOString()).toBe(task.createdAt);
@@ -260,5 +261,44 @@ describe('completeTask', () => {
   test.failing('keeps the task priority unchanged (BUG-3)', () => {
     const task = taskService.create({ title: 'A', priority: 'high' });
     expect(taskService.completeTask(task.id).priority).toBe('high');
+  });
+});
+
+describe('assignTask', () => {
+  test('stores the assignee and returns the updated task', () => {
+    const task = taskService.create({ title: 'A' });
+    const assigned = taskService.assignTask(task.id, 'Priya');
+
+    expect(assigned.assignee).toBe('Priya');
+    expect(taskService.findById(task.id).assignee).toBe('Priya');
+  });
+
+  test('trims surrounding whitespace from the name', () => {
+    const task = taskService.create({ title: 'A' });
+    expect(taskService.assignTask(task.id, '  Priya  ').assignee).toBe('Priya');
+  });
+
+  test('replaces an existing assignee', () => {
+    const task = taskService.create({ title: 'A' });
+    taskService.assignTask(task.id, 'Priya');
+    expect(taskService.assignTask(task.id, 'Arjun').assignee).toBe('Arjun');
+  });
+
+  test('clears the assignee when given null', () => {
+    const task = taskService.create({ title: 'A' });
+    taskService.assignTask(task.id, 'Priya');
+    expect(taskService.assignTask(task.id, null).assignee).toBeNull();
+  });
+
+  test('does not touch any other field', () => {
+    const task = taskService.create({ title: 'A', priority: 'high', status: 'in_progress' });
+    const { assignee, ...rest } = taskService.assignTask(task.id, 'Priya');
+    const { assignee: _ignored, ...original } = task;
+
+    expect(rest).toEqual(original);
+  });
+
+  test('returns null for an unknown id', () => {
+    expect(taskService.assignTask('nope', 'Priya')).toBeNull();
   });
 });

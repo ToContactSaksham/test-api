@@ -44,6 +44,7 @@ describe('POST /tasks', () => {
       priority: 'medium',
       dueDate: null,
       completedAt: null,
+      assignee: null,
     });
   });
 

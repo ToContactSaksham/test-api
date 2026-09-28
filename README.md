@@ -65,7 +65,7 @@ ASSIGNMENT.md               # Full brief — read this first
 | `DELETE` | `/tasks/:id`              | Delete a task (returns 204)              |
 | `PATCH`  | `/tasks/:id/complete`     | Mark a task as complete                  |
 | `GET`    | `/tasks/stats`            | Counts by status + overdue count         |
-| `PATCH`  | `/tasks/:id/assign`       | **Assign a task to a user** _(to implement)_ |
+| `PATCH`  | `/tasks/:id/assign`       | Assign a task: `{ "assignee": "Name" }`, or `{ "assignee": null }` to unassign |
 
 ### Task shape
 
@@ -78,6 +78,7 @@ ASSIGNMENT.md               # Full brief — read this first
   "priority": "low | medium | high",
   "dueDate": "ISO 8601 or null",
   "completedAt": "ISO 8601 or null",
+  "assignee": "string or null",
   "createdAt": "ISO 8601"
 }
 ```

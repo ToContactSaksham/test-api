@@ -163,22 +163,19 @@ describe('GET /tasks?page=&limit=', () => {
     for (let i = 1; i <= 5; i++) await createTask({ title: `task ${i}` });
   });
 
-  // BUG-1
-  test.failing('page 1 returns the first page (BUG-1)', async () => {
+  test('page 1 returns the first page', async () => {
     const res = await request(app).get('/tasks?page=1&limit=2');
 
     expect(res.status).toBe(200);
     expect(titles(res)).toEqual(['task 1', 'task 2']);
   });
 
-  // BUG-1
-  test.failing('page 2 returns the second page (BUG-1)', async () => {
+  test('page 2 returns the second page', async () => {
     const res = await request(app).get('/tasks?page=2&limit=2');
     expect(titles(res)).toEqual(['task 3', 'task 4']);
   });
 
-  // BUG-1
-  test.failing('pages do not overlap and together cover every task (BUG-1)', async () => {
+  test('pages do not overlap and together cover every task', async () => {
     const seen = [];
     for (let page = 1; page <= 3; page++) {
       seen.push(...titles(await request(app).get(`/tasks?page=${page}&limit=2`)));
@@ -186,14 +183,12 @@ describe('GET /tasks?page=&limit=', () => {
     expect(seen).toEqual(['task 1', 'task 2', 'task 3', 'task 4', 'task 5']);
   });
 
-  // BUG-1
-  test.failing('defaults to page 1 when only limit is given (BUG-1)', async () => {
+  test('defaults to page 1 when only limit is given', async () => {
     const res = await request(app).get('/tasks?limit=3');
     expect(titles(res)).toEqual(['task 1', 'task 2', 'task 3']);
   });
 
-  // BUG-1
-  test.failing('defaults to a limit of 10 when only page is given (BUG-1)', async () => {
+  test('defaults to a limit of 10 when only page is given', async () => {
     for (let i = 6; i <= 12; i++) await createTask({ title: `task ${i}` });
 
     const res = await request(app).get('/tasks?page=1');
@@ -205,12 +200,11 @@ describe('GET /tasks?page=&limit=', () => {
     expect(res.body).toEqual([]);
   });
 
-  // BUG-1 (+ negative values would read from the end of the list once the offset is fixed)
-  test.failing.each([
+  test.each([
     ['non-numeric values', 'page=abc&limit=xyz'],
     ['zero', 'page=0&limit=0'],
     ['negative values', 'page=-1&limit=-2'],
-  ])('falls back to the defaults for %s (BUG-1)', async (_label, query) => {
+  ])('falls back to the defaults for %s', async (_label, query) => {
     const res = await request(app).get(`/tasks?${query}`);
 
     expect(res.status).toBe(200);

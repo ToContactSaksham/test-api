@@ -134,18 +134,15 @@ describe('getPaginated', () => {
 
   const titles = (list) => list.map((t) => t.title);
 
-  // BUG-1: offset is page * limit, so page 1 skips the first page.
-  test.failing('page 1 returns the first `limit` tasks (BUG-1)', () => {
+  test('page 1 returns the first `limit` tasks', () => {
     expect(titles(taskService.getPaginated(1, 2))).toEqual(['task 1', 'task 2']);
   });
 
-  // BUG-1: offset is page * limit, so page 1 skips the first page.
-  test.failing('page 2 returns the next `limit` tasks (BUG-1)', () => {
+  test('page 2 returns the next `limit` tasks', () => {
     expect(titles(taskService.getPaginated(2, 2))).toEqual(['task 3', 'task 4']);
   });
 
-  // BUG-1: offset is page * limit, so page 1 skips the first page.
-  test.failing('the last page can be partial (BUG-1)', () => {
+  test('the last page can be partial', () => {
     expect(titles(taskService.getPaginated(3, 2))).toEqual(['task 5']);
   });
 
@@ -153,8 +150,7 @@ describe('getPaginated', () => {
     expect(taskService.getPaginated(4, 2)).toEqual([]);
   });
 
-  // BUG-1: offset is page * limit, so page 1 skips the first page.
-  test.failing('a limit larger than the list returns everything on page 1 (BUG-1)', () => {
+  test('a limit larger than the list returns everything on page 1', () => {
     expect(taskService.getPaginated(1, 50)).toHaveLength(5);
   });
 });

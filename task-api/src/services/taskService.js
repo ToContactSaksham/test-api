@@ -8,8 +8,9 @@ const findById = (id) => tasks.find((t) => t.id === id);
 
 const getByStatus = (status) => tasks.filter((t) => t.status.includes(status));
 
+// `page` is 1-based: page 1 is the first `limit` tasks.
 const getPaginated = (page, limit) => {
-  const offset = page * limit;
+  const offset = (page - 1) * limit;
   return tasks.slice(offset, offset + limit);
 };
 

@@ -3,6 +3,14 @@ const router = express.Router();
 const taskService = require('../services/taskService');
 const { validateCreateTask, validateUpdateTask } = require('../utils/validators');
 
+// Parses a query param as an integer >= 1, falling back for missing/invalid input.
+// Guards getPaginated against negative values, which slice() would treat as
+// "count from the end" and return the wrong tasks.
+const toPositiveInt = (value, fallback) => {
+  const n = parseInt(value, 10);
+  return Number.isInteger(n) && n >= 1 ? n : fallback;
+};
+
 router.get('/stats', (req, res) => {
   const stats = taskService.getStats();
   res.json(stats);
@@ -17,8 +25,8 @@ router.get('/', (req, res) => {
   }
 
   if (page !== undefined || limit !== undefined) {
-    const pageNum = parseInt(page) || 1;
-    const limitNum = parseInt(limit) || 10;
+    const pageNum = toPositiveInt(page, 1);
+    const limitNum = toPositiveInt(limit, 10);
     const tasks = taskService.getPaginated(pageNum, limitNum);
     return res.json(tasks);
   }
